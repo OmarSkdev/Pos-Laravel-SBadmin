@@ -56,7 +56,7 @@
                     Categorías
                 </a>
                 <a class="nav-link" href="{{ route('marcas.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
+                    <div class="sb-nav-link-icon"><i class="fas fa-universal-access"></i></div>
                     Marcas
                 </a>
                 <a class="nav-link" href="{{ route('presentaciones.index') }}">
@@ -64,12 +64,12 @@
                     Presentaciones
                 </a>
                 <a class="nav-link" href="{{ route('productos.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fa brands fa-shopify"></i></div>
+                    <div class="sb-nav-link-icon"><i class="fas fa-shopping-bag"></i></div>
                     Productos
                 </a>
-                <a class="nav-link" href="tables.html">
-                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                    Tables
+                <a class="nav-link" href="{{ route('clientes.index')}}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                    Clientes
                 </a>
             </div>
         </div>

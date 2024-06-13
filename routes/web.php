@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\categoriaController;
+use App\Http\Controllers\clienteController;
 use App\Http\Controllers\marcaController;
 use App\Http\Controllers\presentacioneController;
 use App\Http\Controllers\ProductoController;
@@ -33,6 +34,7 @@ Route::resource('categorias', categoriaController::class);
 Route::resource('marcas', marcaController::class);
 Route::resource('presentaciones', presentacioneController::class);
 Route::resource('productos', ProductoController::class);
+Route::resource('clientes', clienteController::class);
 
 
 Route::get('/401', function () {
