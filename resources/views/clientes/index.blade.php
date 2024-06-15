@@ -29,7 +29,7 @@
 @endif
 
 <div class="container-fluid px-4">
-    <h1 class="mt-4 text-center">Clientess</h1>
+    <h1 class="mt-4 text-center">Clientes</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{route('panel')}}">Inicio</a></li>
         <li class="breadcrumb-item active">Clientes</li>
@@ -47,39 +47,45 @@
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
-                {{-- <thead>
+                <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Descripción</th>
+                        <th>Dirección</th>
+                        <th>Tipo de Documento</th>
+                        {{-- <th>N° Documento</th> --}}
+                        <th>Tipo de Persona</th>
                         <th>Estado</th>
                         <th>Acciones</th>                        
                     </tr>
                 </thead>                
                 <tbody>
-                    @foreach ($categorias as $categoria)
+                    @foreach ($clientes as $item)
                     <tr>                        
-                        <td>{{ $categoria->caracteristica->nombre }}</td>                                                
-                    
-                                           
-                        <td>{{ $categoria->caracteristica->descripcion }}</td>
+                        <td>{{ $item->persona->razon_social }}</td>                  
+                                                               
+                        <td>{{ $item->persona->direccion }}</td>
+                        <td><p class="fw-normal mb-1">{{ $item->persona->documento->tipo_documento }}</p>
+                            <p class="text-muted mb-0">{{ $item->persona->numero_documento }}</p>
+                        </td>
+                        <td>{{ $item->persona->tipo_persona }}</td>
                         <td>
-                        @if ($categoria->caracteristica->estado==1)
-                            <span class="fw-bolder p-1 rounded bg-success text-white">Activo</span>
+                        @if ($item->persona->estado==1)
+                            <span class="badge rounded-pill p-2 bg-success d-inline">Activo</span>
                         @else
-                            <span class="fw-bolder p-1 rounded bg-danger text-white">Eliminado</span>
+                            <span class="fw-bolder p-1 rounded bg-danger text-white d-inline">Eliminado</span>
                         @endif
                         </td>   
                         <td>
                             <div class="btn-group" role="group" aria-label="Ejemplo botones">
-                                <form action="{{route('categorias.edit', ['categoria'=> $categoria])}}" method="GET">
+                                <form action="{{route('clientes.edit', ['cliente'=> $item])}}" method="GET">
                                     
                                     <button type="submit" class="btn btn-warning m-1">Editar</button>
                                 </form>
-                                @if ($categoria->caracteristica->estado == 1)
-                                    <button type="button" class="btn btn-danger m-1" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ $categoria->id }}">Eliminar</button>
+                                @if ($item->persona->estado == 1)
+                                    <button type="button" class="btn btn-danger m-1" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ $item->id }}">Eliminar</button>
 
                                 @else
-                                    <button type="button" class="btn btn-success m-1" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ $categoria->id }}">Restaurar</button>
+                                    <button type="button" class="btn btn-success m-1" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ $item->id }}">Restaurar</button>
 
                                 @endif                               
                                                                 
@@ -88,7 +94,7 @@
                     </tr>
 
                         <!-- Modal -->
-                    <div class="modal fade" id="exampleModal-{{ $categoria->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    {{-- <div class="modal fade" id="exampleModal-{{ $item->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -108,10 +114,10 @@
                             </div>
                         </div>
                         </div>
-                    </div>
+                    </div> --}}
                     @endforeach                
                                                   
-                </tbody> --}}
+                </tbody> 
             </table>
         </div>
     </div>
