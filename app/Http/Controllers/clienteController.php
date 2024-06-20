@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePersonaRequest;
+use App\Http\Requests\UpdateClienteRequest;
 use App\Models\Cliente;
 use App\Models\Documento;
 use App\Models\Persona;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\TryCatch;
 
 class clienteController extends Controller
 {
@@ -62,17 +64,27 @@ class clienteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Cliente $cliente)
     {
-        //
+        $cliente->load('persona.documento');
+        // dd($cliente);
+        $documentos = Documento::all();
+        return view('clientes.edit', compact('cliente', 'documentos'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateClienteRequest $request, Cliente $cliente)
     {
-        //
+       
+
+            Persona::where('id',$cliente->persona->id)
+            ->update($request->validated());
+
+           
+        
+        return redirect()->route('clientes.index')->with('succes', 'Cliente editado');
     }
 
     /**
