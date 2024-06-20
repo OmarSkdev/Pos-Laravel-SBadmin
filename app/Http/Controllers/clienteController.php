@@ -92,6 +92,24 @@ class clienteController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $message = '';
+        $persona = Persona::find($id);
+        if ($persona->estado == 1) {
+            Persona::where('id', $persona->id)
+            ->update([
+                'estado' => 0
+            ]);
+            $message = 'Cliente eliminado';
+        } else {
+            Persona::where('id', $persona->id)
+            ->update([
+                'estado' => 1
+            ]);
+            $message = 'Cliente restaurado';
+        }
+
+        return redirect()->route('clientes.index')->with('success', $message);
+
     }
+    
 }
