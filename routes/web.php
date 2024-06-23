@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\categoriaController;
 use App\Http\Controllers\clienteController;
+use App\Http\Controllers\compraController;
 use App\Http\Controllers\marcaController;
 use App\Http\Controllers\presentacioneController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\proveedoreController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,6 +37,8 @@ Route::resource('marcas', marcaController::class);
 Route::resource('presentaciones', presentacioneController::class);
 Route::resource('productos', ProductoController::class);
 Route::resource('clientes', clienteController::class);
+Route::resource('proveedores', proveedoreController::class);
+Route::resource('compras', compraController::class);
 
 
 Route::get('/401', function () {
