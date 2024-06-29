@@ -28,6 +28,90 @@
                     Detalles de Compra
                 </div>
                 <div class="p-3 border border-3 border-primary">
+                    <div class="row">
+                        {{-- PRODUCTO --}}
+                        <div class="col-md-12 mb-2">
+                            <select name="producto_id" id="producto_id" class="form-control selectpicker" data-live-search="true" data-size="1" title="Busque un Producto">
+                                @foreach ($productos as $item)
+                                    <option value="{{$item->id}}">{{$item->codigo.'  '.$item->nombre}}</option>
+                                @endforeach
+
+                            </select>
+                        </div>
+
+                        {{-- CANTIDAD --}}
+                        <div class="col-md-4 mb-2">
+                            <label for="cantidad" class="form-label">Cantidad:</label>
+                            <input type="number" name="cantidad" id="cantidad" class="form-control">
+                        </div>
+
+                        {{-- Precio de Compra --}}
+                        <div class="col-md-4 mb-2">
+                            <label for="precio_compra" class="form-label">Precio de Compra:</label>
+                            <input type="number" name="precio_compra" id="precio_compra" class="form-control" step="0.1">
+                        </div>
+
+                        {{-- Precio de Venta --}}
+                        <div class="col-md-4 mb-2">
+                            <label for="precio_compra" class="form-label">Precio de Venta:</label>
+                            <input type="number" name="precio_venta" id="precio_venta" class="form-control" step="0.1">
+                        </div>
+
+                        {{-- Botón para Agregar --}}
+                        <div class="col-md-12 mb-2 mt-2 text-end">
+                            <button class="btn btn-primary" type="button">Agregar</button>
+                        </div>
+
+                        {{-- Tabla para el detalle de la vENTA --}}
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="tabla-detalle" class="table table-hover">
+                                    <thead class="bg-primary text-white">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Compra</th>
+                                            <th>Precio Venta</th>
+                                            <th>Subtotal</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th>Sumas</th>
+                                            <th>0</th>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <th>IVA %</th>
+                                            <th>0</th>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <th>Total</th>
+                                            <th>0</th>
+                                        </tr>
+                                    </tfoot>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
 
                 </div>
 
@@ -87,8 +171,8 @@
                         </div>
 
                         <!--Botones-->
-                        <div class="col-md-12 mb-2 text-center">
-                            <button type="submit" class="btn btn-success">Guardar</button>
+                        <div class="col-md-12 mb-2 mt-2 text-end">
+                            <button class="btn btn-primary" type="button">Guardar</button>
                         </div>
                     </div>
                 </div>
