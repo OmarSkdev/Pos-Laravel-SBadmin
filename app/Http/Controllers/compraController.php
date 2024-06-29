@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comprobante;
 use App\Models\Proveedore;
 use Illuminate\Http\Request;
 
@@ -21,7 +22,8 @@ class compraController extends Controller
     public function create()
     {
         $proveedores = Proveedore::all();
-        return view('compra.create',compact('proveedores'));
+        $comprobantes = Comprobante::all();
+        return view('compra.create',compact('proveedores', 'comprobantes'));
     }
 
     /**
