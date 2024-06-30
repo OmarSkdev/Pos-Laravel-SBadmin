@@ -59,13 +59,13 @@
 
                         {{-- Botón para Agregar --}}
                         <div class="col-md-12 mb-2 mt-2 text-end">
-                            <button class="btn btn-primary" type="button">Agregar</button>
+                            <button class="btn btn-primary" id="btn_agregar" type="button">Agregar</button>
                         </div>
 
                         {{-- Tabla para el detalle de la vENTA --}}
                         <div class="col-md-12">
                             <div class="table-responsive">
-                                <table id="tabla-detalle" class="table table-hover">
+                                <table id="tabla_detalle" class="table table-hover">
                                     <thead class="bg-primary text-white">
                                         <tr>
                                             <th>#</th>
@@ -92,17 +92,17 @@
                                         <tr>
                                             <th></th>
                                             <th>Sumas</th>
-                                            <th>0</th>
+                                            <th><span id="sumas">0</span></th>
                                         </tr>
                                         <tr>
                                             <th></th>
                                             <th>IVA %</th>
-                                            <th>0</th>
+                                            <th><span id="iva">0</span></th>
                                         </tr>
                                         <tr>
                                             <th></th>
                                             <th>Total</th>
-                                            <th>0</th>
+                                            <th><span id="total">0</span></th>
                                         </tr>
                                     </tfoot>
 
@@ -187,5 +187,69 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#btn_agregar').click(function(){
+            agregarProducto();
+        });
+        $('#impuesto').val(impuesto + '%')
+    });
 
+    //VARIABLES
+    let cont = 0;
+    let subtotal = [];
+    let sumas = 0;
+    let iva = 0;
+    let total = 0;
+
+    //CONSTANTES
+    const impuesto = 19;
+
+    function agregarProducto(){
+        let idProducto = $('#producto_id').val();
+        let nameProducto = ($('#producto_id option:selected').text()).split('  ')[1];
+        let cantidad = $('#cantidad').val();
+        let precioCompra = $('#precio_compra').val();
+        let precioVenta = $('#precio_venta').val();
+
+        // Calcular subtotales
+        subtotal[cont] = cantidad * precioCompra;
+        sumas += subtotal[cont];
+        iva = sumas / 100 * impuesto;
+        total = sumas + iva;
+
+        let fila = '<tr>' +
+            '<th>' + (cont + 1) + '</th>' +
+            '<td>' + nameProducto + '</td>' +
+            '<td>' + cantidad + '</td>' +
+            '<td>' + precioCompra + '</td>' +
+            '<td>' + precioVenta + '</td>' +
+            '<td>' + subtotal[cont] + '</td>' +
+            '<td><button class="btn btn-danger" type="button"><i class="fas fa-trash"></i></button></td>' +
+            '</tr>';
+        
+        $('#tabla_detalle').append(fila);
+        limpiarCampos();
+        cont++;
+
+        //Mostrar los campos calculados
+        $('#sumas').html(sumas);
+        $('#iva').html(iva);
+        $('#total').html(total);
+
+
+    }
+
+    function limpiarCampos() {
+        let select = $('#producto_id');
+        select.selectpicker();
+        select.selectpicker('val', '');
+        $('#cantidad').val('');
+        $('#precio_compra').val('');
+        $('#precio_venta').val('');
+
+
+
+    }
+</script>
 @endpush
