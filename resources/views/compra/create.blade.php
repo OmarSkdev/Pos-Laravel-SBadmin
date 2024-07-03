@@ -5,6 +5,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 @endpush
 
@@ -91,18 +92,18 @@
                                     <tfoot>
                                         <tr>
                                             <th></th>
-                                            <th>Sumas</th>
-                                            <th><span id="sumas">0</span></th>
+                                            <th colspan="4">Sumas</th>
+                                            <th colspan="2"><span id="sumas">0</span></th>
                                         </tr>
                                         <tr>
                                             <th></th>
-                                            <th>IVA %</th>
-                                            <th><span id="iva">0</span></th>
+                                            <th colspan="4">IVA %</th>
+                                            <th colspan="2"><span id="iva">0</span></th>
                                         </tr>
                                         <tr>
                                             <th></th>
-                                            <th>Total</th>
-                                            <th><span id="total">0</span></th>
+                                            <th colspan="4">Total</th>
+                                            <th colspan="2"><span id="total">0</span></th>
                                         </tr>
                                     </tfoot>
 
@@ -110,6 +111,13 @@
 
                             </div>
 
+                        </div>
+
+                        <!--Boton para cancelar compra-->
+                        <div class="col-12 mt-2">
+                            <button id="cancelar" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Cancelar compra
+                            </button>
                         </div>
                     </div>
 
@@ -171,8 +179,8 @@
                         </div>
 
                         <!--Botones-->
-                        <div class="col-md-12 mb-2 mt-2 text-end">
-                            <button class="btn btn-primary" type="button">Guardar</button>
+                        <div class="col-md-12 mt-4 text-center">
+                            <button class="btn btn-success" type="button" id="guardar">Guardar Compra</button>
                         </div>
                     </div>
                 </div>
@@ -180,6 +188,25 @@
 
         </div>
 
+    </div>
+
+    <!-- Modal para cancelar la compra -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Advertencia</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que quieres cancelar la compra?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button id="btnCancelarCompra" type="button" class="btn btn-danger" data-bs-dismiss="modal">Confirmar</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 </form>
@@ -192,6 +219,13 @@
         $('#btn_agregar').click(function(){
             agregarProducto();
         });
+
+        $('#btnCancelarCompra').click(function() {
+            cancelarCompra();
+        });
+
+        disableButtons();
+        
         $('#impuesto').val(impuesto + '%')
     });
 
@@ -205,6 +239,50 @@
     //CONSTANTES
     const impuesto = 19;
 
+    function cancelarCompra(){
+        $('#tabla_detalle > tbody').empty();
+
+        //Añadir una nueva fila a la tabla
+        let fila = '<tr>' +
+            '<th></th>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '</tr>';
+        $('#tabla_detalle').append(fila);
+
+         //Reiniciar valores de las variables
+        cont = 0;
+        subtotal = [];
+        sumas = 0;
+        iva = 0;
+        total = 0;
+
+        //Mostrar los campos calculados
+        $('#sumas').html(sumas);
+        $('#iva').html(iva);
+        $('#total').html(total);
+        /* $('#impuesto').val(impuesto + '%');
+        $('#inputTotal').val(total); */
+
+        limpiarCampos();
+        disableButtons();
+
+    }
+
+    function disableButtons() {
+        if (total == 0) {
+            $('#guardar').hide();
+            $('#cancelar').hide();
+        } else {
+            $('#guardar').show();
+            $('#cancelar').show();
+        }
+    }
+
     function agregarProducto(){
         let idProducto = $('#producto_id').val();
         let nameProducto = ($('#producto_id option:selected').text()).split('  ')[1];
@@ -212,31 +290,54 @@
         let precioCompra = $('#precio_compra').val();
         let precioVenta = $('#precio_venta').val();
 
-        // Calcular subtotales
-        subtotal[cont] = cantidad * precioCompra;
-        sumas += subtotal[cont];
-        iva = sumas / 100 * impuesto;
-        total = sumas + iva;
+        //Validaciones
+        //1. Para que los campos no esten vacíos
+        if (nameProducto != '' && nameProducto != undefined && cantidad != '' && precioCompra != '' && precioVenta != '' ) {
+            
+            // 2. Validar input cantidad mayor a 0 y es entero. Lo mismo para los otros input pero son decimales
+            if (parseInt(cantidad) > 0 && (cantidad % 1 == 0) && parseFloat(precioCompra) > 0 && parseFloat(precioVenta) > 0) {
+                
+                //3. Para que el precio de compra sea menor que el precio de venta
+                if (parseFloat(precioVenta) > parseFloat(precioCompra)) {
+                    // Calcular subtotales
+                    subtotal[cont] = round(cantidad * precioCompra);
+                    sumas += subtotal[cont];
+                    iva = round(sumas / 100 * impuesto);
+                    total = round(sumas + iva);
 
-        let fila = '<tr>' +
-            '<th>' + (cont + 1) + '</th>' +
-            '<td>' + nameProducto + '</td>' +
-            '<td>' + cantidad + '</td>' +
-            '<td>' + precioCompra + '</td>' +
-            '<td>' + precioVenta + '</td>' +
-            '<td>' + subtotal[cont] + '</td>' +
-            '<td><button class="btn btn-danger" type="button"><i class="fas fa-trash"></i></button></td>' +
-            '</tr>';
+                    let fila = '<tr id="fila' + cont + '">' +
+                        '<th>' + (cont + 1) + '</th>' +
+                        '<td>' + nameProducto + '</td>' +
+                        '<td>' + cantidad + '</td>' +
+                        '<td>' + precioCompra + '</td>' +
+                        '<td>' + precioVenta + '</td>' +
+                        '<td>' + subtotal[cont] + '</td>' +
+                        '<td><button class="btn btn-danger" type="button" onClick="eliminarProducto('+ cont +')"><i class="fas fa-trash"></i></button></td>' +
+                        '</tr>';
         
-        $('#tabla_detalle').append(fila);
-        limpiarCampos();
-        cont++;
+                    $('#tabla_detalle').append(fila);
+                    limpiarCampos();
+                    cont++;
+                    disableButtons();
 
-        //Mostrar los campos calculados
-        $('#sumas').html(sumas);
-        $('#iva').html(iva);
-        $('#total').html(total);
+                    //Mostrar los campos calculados
+                    $('#sumas').html(sumas);
+                    $('#iva').html(iva);
+                    $('#total').html(total);
 
+                } else {
+                    showModal('Precio de compra incorrecto');
+                }
+            } else {
+                showModal('Valor incorrectos')
+            }   
+
+        } else {
+            showModal('Faltan campos por ingresar')
+        }
+        
+
+    
 
     }
 
@@ -247,9 +348,56 @@
         $('#cantidad').val('');
         $('#precio_compra').val('');
         $('#precio_venta').val('');
+    }
 
+    function round(num, decimales = 2) {
+        var signo = (num >= 0 ? 1 : -1);
+        num = num * signo;
+        if (decimales === 0) //con 0 decimales
+            return signo * Math.round(num);
+        // round(x * 10 ^ decimales)
+        num = num.toString().split('e');
+        num = Math.round(+(num[0] + 'e' + (num[1] ? (+num[1] + decimales) : decimales)));
+        // x * 10 ^ (-decimales)
+        num = num.toString().split('e');
+        return signo * (num[0] + 'e' + (num[1] ? (+num[1] - decimales) : -decimales));
+    }
+    //Fuente: https://es.stackoverflow.com/questions/48958/redondear-a-dos-decimales-cuando-sea-necesario
 
+    function eliminarProducto(indice) {
+        //Calcular valores
+        sumas -= round(subtotal[indice]);
+        iva = round(sumas / 100 * impuesto);
+        total = round(sumas + iva);
 
+        //Mostrar los campos calculados
+        $('#sumas').html(sumas);
+        $('#iva').html(iva);
+        $('#total').html(total);
+        /* $('#impuesto').val(igv);
+        $('#InputTotal').val(total); */
+
+        //Eliminar el fila de la tabla
+        $('#fila' + indice).remove();
+    }
+
+    function showModal(message, icon = 'error') {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        })
     }
 </script>
 @endpush
