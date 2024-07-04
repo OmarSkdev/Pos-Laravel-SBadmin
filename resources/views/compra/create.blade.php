@@ -19,7 +19,7 @@
         <li class="breadcrumb-item active">Crear Compra</li>
     </ol>
 </div>
-<form action="" method="POST">
+<form action="{{ route('compras.store')}}" method="POST">
     @csrf
     <div class="container mt-4">
         <div class="row gy-4">
@@ -138,6 +138,9 @@
                                     <option value="{{$item->id}}">{{$item->persona->razon_social}}</option>
                                 @endforeach
                             </select>
+                            @error('proveedor_id')
+                                <small class="text-danger">{{'*'.$message }}</small>
+                            @enderror
                         </div>
                         {{-- Tipo Comprobante --}}
                         <div class="col-12 mb-2">
@@ -265,8 +268,8 @@
         $('#sumas').html(sumas);
         $('#iva').html(iva);
         $('#total').html(total);
-        /* $('#impuesto').val(impuesto + '%');
-        $('#inputTotal').val(total); */
+        $('#impuesto').val(impuesto + '%');
+        $('#inputTotal').val(total); 
 
         limpiarCampos();
         disableButtons();
@@ -307,10 +310,10 @@
 
                     let fila = '<tr id="fila' + cont + '">' +
                         '<th>' + (cont + 1) + '</th>' +
-                        '<td>' + nameProducto + '</td>' +
-                        '<td>' + cantidad + '</td>' +
-                        '<td>' + precioCompra + '</td>' +
-                        '<td>' + precioVenta + '</td>' +
+                        '<td><input type="hidden" name="arrayidproducto[]" value="' + idProducto + '">' + nameProducto + '</td>' +
+                        '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad + '</td>' +
+                        '<td><input type="hidden" name="arraypreciocompra[]" value="' + precioCompra + '">' + precioCompra + '</td>' +
+                        '<td><input type="hidden" name="arrayprecioventa[]" value="' + precioVenta + '">' + precioVenta + '</td>' +
                         '<td>' + subtotal[cont] + '</td>' +
                         '<td><button class="btn btn-danger" type="button" onClick="eliminarProducto('+ cont +')"><i class="fas fa-trash"></i></button></td>' +
                         '</tr>';
@@ -323,6 +326,7 @@
                     //Mostrar los campos calculados
                     $('#sumas').html(sumas);
                     $('#iva').html(iva);
+                    $('#impuesto').val(iva);
                     $('#total').html(total);
 
                 } else {
@@ -374,8 +378,8 @@
         $('#sumas').html(sumas);
         $('#iva').html(iva);
         $('#total').html(total);
-        /* $('#impuesto').val(igv);
-        $('#InputTotal').val(total); */
+        $('#impuesto').val(igv);
+        $('#InputTotal').val(total); 
 
         //Eliminar el fila de la tabla
         $('#fila' + indice).remove();
