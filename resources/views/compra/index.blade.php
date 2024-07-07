@@ -68,26 +68,22 @@
                             <p class="text-muted mb-0">{{$item->proveedore->persona->razon_social}}</p>
                         </td>
                         <td>
-                            {{ $item->fecha_hora }}
+                            {{ 
+                                \Carbon\Carbon::parse($item->fecha_hora)->format('d-M-Y').'  '.
+                                \Carbon\Carbon::parse($item->fecha_hora)->format('H:i')
+
+                            }}
                         </td>
                         <td>
                             {{ $item->total }}     
                           
 
                         </td>
-                            <div class="btn-group" role="group" aria-label="Ejemplo botones">
-                                <form action="{{route('clientes.edit', ['cliente'=> $item])}}" method="GET">
-                                    
-                                    <button type="submit" class="btn btn-warning m-1">Editar</button>
-                                </form>
-                                @if ($item->persona->estado == 1)
-                                    <button type="button" class="btn btn-danger m-1" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ $item->id }}">Eliminar</button>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Ejemplo de mix botones">
+                                <button type="button" class="btn btn-success">Ver</button>
+                                <button type="button" class="btn btn-danger">Eliminar</button>
 
-                                @else
-                                    <button type="button" class="btn btn-success m-1" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ $item->id }}">Restaurar</button>
-
-                                @endif                               
-                                                                
                             </div>
                         </td>                                             
                     </tr>
