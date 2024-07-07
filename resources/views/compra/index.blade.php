@@ -49,33 +49,32 @@
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Dirección</th>
-                        <th>Tipo de Documento</th>
-                        {{-- <th>N° Documento</th> --}}
-                        <th>Tipo de Persona</th>
-                        <th>Estado</th>
+                        <th>Comprobante</th>
+                        <th>Proveedor</th>
+                        <th>Fecha y Hora</th>
+                        <th>Total</th>
                         <th>Acciones</th>                        
                     </tr>
                 </thead>                
                 <tbody>
-                {{--     @foreach ($clientes as $item)
+                @foreach ($compras as $item)
                     <tr>                        
-                        <td>{{ $item->persona->razon_social }}</td>                  
-                                                               
-                        <td>{{ $item->persona->direccion }}</td>
-                        <td><p class="fw-normal mb-1">{{ $item->persona->documento->tipo_documento }}</p>
-                            <p class="text-muted mb-0">{{ $item->persona->numero_documento }}</p>
+                        <td>
+                            <p class="fw-semibold mb-1">{{$item->comprobante->tipo_comprobante}}</p>
+                            <p class="text-muted mb-0">{{$item->numero_comprobante}}</p>
                         </td>
-                        <td>{{ $item->persona->tipo_persona }}</td>
                         <td>
-                        @if ($item->persona->estado==1)
-                            <span class="badge rounded-pill p-2 bg-success d-inline">Activo</span>
-                        @else
-                            <span class="fw-bolder p-1 rounded bg-danger text-white d-inline">Eliminado</span>
-                        @endif
-                        </td>   
+                            <p class="fw-semibold mb-1">{{ ucfirst($item->proveedore->persona->tipo_persona) }}</p>
+                            <p class="text-muted mb-0">{{$item->proveedore->persona->razon_social}}</p>
+                        </td>
                         <td>
+                            {{ $item->fecha_hora }}
+                        </td>
+                        <td>
+                            {{ $item->total }}     
+                          
+
+                        </td>
                             <div class="btn-group" role="group" aria-label="Ejemplo botones">
                                 <form action="{{route('clientes.edit', ['cliente'=> $item])}}" method="GET">
                                     
@@ -92,6 +91,8 @@
                             </div>
                         </td>                                             
                     </tr>
+
+                    {{--
 
                         <!-- Modal -->
                     <div class="modal fade" id="exampleModal-{{ $item->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -114,8 +115,8 @@
                             </div>
                         </div>
                         </div>
-                    </div>
-                    @endforeach              --}}   
+                    </div>--}}
+                    @endforeach        
                                                   
                 </tbody> 
             </table>

@@ -103,7 +103,7 @@
                                         <tr>
                                             <th></th>
                                             <th colspan="4">Total</th>
-                                            <th colspan="2"><span id="total">0</span></th>
+                                            <th colspan="2"><input type="hidden" name="total" value="0" id="inputTotal"><span id="total">0</span></th>
                                         </tr>
                                     </tfoot>
 
@@ -183,7 +183,7 @@
 
                         <!--Botones-->
                         <div class="col-md-12 mt-4 text-center">
-                            <button class="btn btn-success" type="button" id="guardar">Guardar Compra</button>
+                            <button class="btn btn-success" type="submit" id="guardar">Guardar Compra</button>
                         </div>
                     </div>
                 </div>
@@ -328,6 +328,7 @@
                     $('#iva').html(iva);
                     $('#impuesto').val(iva);
                     $('#total').html(total);
+                    $('#inputTotal').val(total);
 
                 } else {
                     showModal('Precio de compra incorrecto');

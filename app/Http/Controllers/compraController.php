@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compra;
 use App\Models\Comprobante;
 use App\Models\Producto;
 use App\Models\Proveedore;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class compraController extends Controller
 {
@@ -14,7 +17,12 @@ class compraController extends Controller
      */
     public function index()
     {
-        return view('compra.index');
+        $compras = Compra::with('comprobante', 'proveedore.persona')
+        ->where('estado',1)
+        ->latest()
+        ->get();
+        // dd($compras);
+        return view('compra.index', compact('compras'));
     }
 
     /**
@@ -22,9 +30,12 @@ class compraController extends Controller
      */
     public function create()
     {
-        $proveedores = Proveedore::all();
+        $proveedores = Proveedore::whereHas('persona',function($query){
+            $query->where('estado',1);
+
+        })->get();
         $comprobantes = Comprobante::all();
-        $productos = Producto::all();
+        $productos = Producto::where('estado',1)->get();
         return view('compra.create',compact('proveedores', 'comprobantes', 'productos'));
     }
 
@@ -33,7 +44,18 @@ class compraController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request);
+        try {
+            DB::beginTransaction();
+            // Llenar la tabla de campos
+            $compra = Compra::create($request->validated());
+            
+            DB::commit();
+            
+        } catch (Exception $e) {
+            //throw $th;
+            DB::reset();
+        }
     }
 
     /**
