@@ -176,9 +176,14 @@
                         <div class="col-md-6 mb-2">
                             <label for="fecha" class="form-label">Fecha:</label>
                             <input readonly type="date" name="fecha" id="fecha" class="form-control border-success" value="<?php echo date("Y-m-d") ?>">
-                            @error('impuesto')
+                            @error('fecha')
                             <small class="text-danger">{{ '*'.$message }}</small>
                             @enderror
+                            <?php
+                            use Carbon\Carbon;
+                            $fecha_hora = Carbon::now()->toDateTimeString();
+                            ?>
+                            <input type="hidden" name="fecha_hora" value="{{$fecha_hora}}">
                         </div>
 
                         <!--Botones-->
