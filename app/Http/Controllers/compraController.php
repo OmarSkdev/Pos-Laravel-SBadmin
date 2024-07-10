@@ -122,6 +122,10 @@ class compraController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Compra::where('id',$id)
+        ->update([
+            'estado' => 0
+        ]);
+        return redirect()->route('compras.index')->with('success', 'Compra eliminada');
     }
 }

@@ -83,13 +83,13 @@
                             <div class="btn-group" role="group" aria-label="Ejemplo de mix botones">
                                 <form action="{{ route('compras.show', ['compra'=>$item])}}" method="GET">
                                     <button type="submit" class="btn btn-success">Ver</button>
-                                    <button type="button" class="btn btn-danger">Eliminar</button>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal-{{$item->id}}">Eliminar</button>
                                 </form>
                             </div>
                         </td>                                             
                     </tr>
 
-                    {{--
+                    
 
                         <!-- Modal -->
                     <div class="modal fade" id="exampleModal-{{ $item->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -100,11 +100,11 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                {{ $item->persona->estado == 1 ? '¿Estás seguro de eliminar el cliente?':'seguro de restaurar el cliente?'}}
+                                ¿Estás seguro de eliminar el registro?
                             </div>
                             <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <form action="{{ route('clientes.destroy',['cliente'=>$item->persona->id])}}" method="POST">
+                            <form action="{{ route('compras.destroy',['compra'=>$item->id])}}" method="POST">
                                 @method('DELETE')
                                 @csrf
                                 <button type="submit" class="btn btn-danger">Confirmar</button>
@@ -112,7 +112,7 @@
                             </div>
                         </div>
                         </div>
-                    </div>--}}
+                    </div>
                     @endforeach        
                                                   
                 </tbody> 
