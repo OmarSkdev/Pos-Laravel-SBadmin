@@ -7,6 +7,7 @@ use App\Http\Controllers\marcaController;
 use App\Http\Controllers\presentacioneController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\proveedoreController;
+use App\Http\Controllers\ventaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,8 @@ Route::resource('productos', ProductoController::class);
 Route::resource('clientes', clienteController::class);
 Route::resource('proveedores', proveedoreController::class);
 Route::resource('compras', compraController::class);
+Route::resource('ventas', ventaController::class);
+
 
 
 Route::get('/401', function () {

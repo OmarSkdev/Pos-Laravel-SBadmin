@@ -19,5 +19,9 @@ class Cliente extends Model
         return $this->hasMany(Compra::class);
     }
 
+    public function ventas(){
+        return $this->hasMany(Venta::class);
+    }
+
     protected $fillable = ['persona_id'];
 }
