@@ -81,9 +81,10 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Ejemplo de mix botones">
-                                <button type="button" class="btn btn-success">Ver</button>
-                                <button type="button" class="btn btn-danger">Eliminar</button>
-
+                                <form action="{{ route('compras.show', ['compra'=>$item])}}" method="GET">
+                                    <button type="submit" class="btn btn-success">Ver</button>
+                                    <button type="button" class="btn btn-danger">Eliminar</button>
+                                </form>
                             </div>
                         </td>                                             
                     </tr>
