@@ -35,7 +35,7 @@
                         <div class="col-md-12 mb-2">
                             <select name="producto_id" id="producto_id" class="form-control selectpicker" data-live-search="true" data-size="1" title="Busque un Producto">
                                 @foreach ($productos as $item)
-                                    <option value="{{$item->id}}">{{$item->codigo.'  '.$item->nombre}}</option>
+                                    <option value="{{$item->id}}-{{$item->stock}}-{{$item->precio_venta}}">{{$item->codigo.'  '.$item->nombre}}</option>
                                 @endforeach
 
                             </select>
@@ -46,7 +46,7 @@
                                 <div class="row">
                                     <label for="stock" class="form-label col-sm-4">En stock:</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control">
+                                        <input disabled type="text" id="stock" class="form-control">
                                     </div>
                                 </div>
 
@@ -64,7 +64,7 @@
                         {{-- Precio de Venta --}}
                         <div class="col-md-4 mb-2">
                             <label for="precio_compra" class="form-label">Precio de Venta:</label>
-                            <input type="number" name="precio_venta" id="precio_venta" class="form-control" step="0.1">
+                            <input disabled type="number" name="precio_venta" id="precio_venta" class="form-control" step="0.1">
                         </div>
 
                         {{-- Precio de Venta --}}
@@ -226,7 +226,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="btnCancelarCompra" type="button" class="btn btn-danger" data-bs-dismiss="modal">Confirmar</button>
+                    <button id="btnCancelarVenta" type="button" class="btn btn-danger" data-bs-dismiss="modal">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -237,5 +237,209 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#producto_id').change(mostrarValores);
 
+        $('#btn_agregar').click(function(){
+            agregarProducto();
+        });
+        
+
+        $('#btnCancelarVenta').click(function() {
+            cancelarVenta();
+        });
+
+        disableButtons();
+        
+        $('#impuesto').val(impuesto + '%') 
+    });
+
+    //VARIABLES
+    let cont = 0;
+    let subtotal = [];
+    let sumas = 0;
+    let iva = 0;
+    let total = 0;
+
+    //CONSTANTES
+    const impuesto = 19;
+
+    function cancelarVenta(){
+        $('#tabla_detalle > tbody').empty();
+
+        //Añadir una nueva fila a la tabla
+        let fila = '<tr>' +
+            '<th></th>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '</tr>';
+        $('#tabla_detalle').append(fila);
+
+         //Reiniciar valores de las variables
+        cont = 0;
+        subtotal = [];
+        sumas = 0;
+        iva = 0;
+        total = 0;
+
+        //Mostrar los campos calculados
+        $('#sumas').html(sumas);
+        $('#iva').html(iva);
+        $('#total').html(total);
+        $('#impuesto').val(impuesto + '%');
+        $('#inputTotal').val(total); 
+
+        limpiarCampos();
+        disableButtons();
+
+    }
+
+    function mostrarValores(){
+        let dataProducto = document.getElementById('producto_id').value.split('-');
+        $('#stock').val(dataProducto[1]);
+        $('#precio_venta').val(dataProducto[2]);
+    }
+
+    function agregarProducto(){
+
+        let dataProducto = document.getElementById('producto_id').value.split('-');
+
+        let idProducto = dataProducto[0];
+        let nameProducto = $('producto_id option:selected').text();
+        let cantidad = $('#cantidad').val();
+        let descuento = $('#descuento').val();
+        let precioVenta = $('#precio_venta').val();
+        let stock = $('#stock').val();
+
+
+        if (descuento == '') {
+            descuento = 0;
+        }
+
+        //Validaciones
+        //1. Para que los campos no esten vacíos
+        if (idProducto != '' && cantidad != '' ) {
+            
+            // 2. Validar input cantidad mayor a 0 y es entero. Lo mismo para los otros input pero son decimales
+            if (parseInt(cantidad) > 0 && (cantidad % 1 == 0) && parseFloat(descuento) >= 0 ) {
+                
+                //3. Para que la cantidad no supere el stock
+                if (parseInt(cantidad) <= parseInt(stock)) {
+                    // Calcular subtotales
+                    subtotal[cont] = round(cantidad * precioVenta - descuento);
+                    sumas += subtotal[cont];
+                    iva = round(sumas / 100 * impuesto);
+                    total = round(sumas + iva);
+
+                    let fila = '<tr id="fila' + cont + '">' +
+                        '<th>' + (cont + 1) + '</th>' +
+                        '<td><input type="hidden" name="arrayidproducto[]" value="' + idProducto + '">' + nameProducto + '</td>' +
+                        '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad + '</td>' +
+                        '<td><input type="hidden" name="arrayprecioventa[]" value="' + precioVenta + '">' + precioVenta + '</td>' +
+                        '<td><input type="hidden" name="arraydescuento[]" value="' + descuento + '">' + descuento + '</td>' +
+                        '<td>' + subtotal[cont] + '</td>' +
+                        '<td><button class="btn btn-danger" type="button" onClick="eliminarProducto('+ cont +')"><i class="fas fa-trash"></i></button></td>' +
+                        '</tr>';
+        
+                    $('#tabla_detalle').append(fila);
+                    limpiarCampos();
+                    cont++;
+                    disableButtons();
+
+                    //Mostrar los campos calculados
+                    $('#sumas').html(sumas);
+                    $('#iva').html(iva);
+                    $('#impuesto').val(iva);
+                    $('#total').html(total);
+                    $('#inputTotal').val(total);
+
+                } else {
+                    showModal('Cantidad incorrecta');
+                }
+            } else {
+                showModal('Valor incorrectos')
+            }   
+
+        } else {
+            showModal('Faltan campos por ingresar')
+        }    
+
+    
+
+    }
+
+    function eliminarProducto(indice) {
+        //Calcular valores
+        sumas -= round(subtotal[indice]);
+        iva = round(sumas / 100 * impuesto);
+        total = round(sumas + iva);
+
+        //Mostrar los campos calculados
+        $('#sumas').html(sumas);
+        $('#iva').html(iva);
+        $('#total').html(total);
+        $('#impuesto').val(iva);
+        $('#InputTotal').val(total); 
+
+        //Eliminar el fila de la tabla
+        $('#fila' + indice).remove();
+    }
+
+    function disableButtons() {
+        if (total == 0) {
+            $('#guardar').hide();
+            $('#cancelar').hide();
+        } else {
+            $('#guardar').show();
+            $('#cancelar').show();
+        }
+    }
+
+    function limpiarCampos() {
+        let select = $('#producto_id');
+        select.selectpicker();
+        select.selectpicker('val', '');
+        $('#cantidad').val('');
+        $('#descuento').val('');
+        $('#precio_venta').val('');
+        $('#stock').val('');
+    }
+
+    function round(num, decimales = 2) {
+        var signo = (num >= 0 ? 1 : -1);
+        num = num * signo;
+        if (decimales === 0) //con 0 decimales
+            return signo * Math.round(num);
+        // round(x * 10 ^ decimales)
+        num = num.toString().split('e');
+        num = Math.round(+(num[0] + 'e' + (num[1] ? (+num[1] + decimales) : decimales)));
+        // x * 10 ^ (-decimales)
+        num = num.toString().split('e');
+        return signo * (num[0] + 'e' + (num[1] ? (+num[1] - decimales) : -decimales));
+    }
+    //Fuente: https://es.stackoverflow.com/questions/48958/redondear-a-dos-decimales-cuando-sea-necesario
+    function showModal(message, icon = 'error') {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        })
+    }
+</script>
 @endpush

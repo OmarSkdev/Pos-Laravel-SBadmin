@@ -384,7 +384,7 @@
         $('#sumas').html(sumas);
         $('#iva').html(iva);
         $('#total').html(total);
-        $('#impuesto').val(igv);
+        $('#impuesto').val(iva);
         $('#InputTotal').val(total); 
 
         //Eliminar el fila de la tabla
