@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreVentaRequest;
 use App\Models\Cliente;
 use App\Models\Comprobante;
 use App\Models\Producto;
+use App\Models\Venta;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\TryCatch;
 
 class ventaController extends Controller
 {
@@ -26,6 +30,8 @@ class ventaController extends Controller
          $subquery = DB::table('compra_producto')
             ->select('producto_id', DB::raw('MAX(created_at) as max_created_at'))
             ->groupBy('producto_id');
+            // ->get();
+            
 
         $productos = Producto::join('compra_producto as cpr', function ($join) use ($subquery) {
             $join->on('cpr.producto_id', '=', 'productos.id')
@@ -43,6 +49,7 @@ class ventaController extends Controller
         $clientes = Cliente::whereHas('persona', function($query) {
             $query->where('estado',1);            
         })->get();
+
         $comprobantes = Comprobante::all();
         return view('venta.create', compact('productos', 'clientes', 'comprobantes'));
     }
@@ -50,9 +57,54 @@ class ventaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreVentaRequest $request)
     {
-        //
+        // dd($request->validated());
+        try {
+            DB::beginTransaction();
+            //Llenar mi tabla venta
+            $venta = Venta::create($request->validated());
+
+            //Llenar mi tabla venta_producto
+            //1. Recuperar los arrays
+            $arrayProducto_id = $request->get('arrayidproducto');
+            $arrayCantidad = $request->get('arraycantidad');
+            $arrayPrecioVenta = $request->get('arrayprecioventa');
+            $arrayDescuento = $request->get('arraydescuento'); 
+
+            //2.Realizar el llenado
+            $siseArray = count($arrayProducto_id);
+            $cont = 0;
+
+            while($cont < $siseArray){
+                $venta->productos()->syncWithoutDetaching([
+                    $arrayProducto_id[$cont] => [
+                        'cantidad' => $arrayCantidad[$cont],
+                        'precio_venta' => $arrayPrecioVenta[$cont],
+                        'descuento' => $arrayDescuento[$cont]
+                    ]
+                ]);
+
+                  //Actualizar stock
+                  $producto = Producto::find($arrayProducto_id[$cont]);
+                  $stockActual = $producto->stock;
+                  $cantidad = intval($arrayCantidad[$cont]);
+  
+                  DB::table('productos')
+                  ->where('id',$producto->id)
+                  ->update([
+                      'stock' => $stockActual - $cantidad
+                  ]);
+  
+                  $cont++;
+              }
+              DB::commit();
+        } catch (Exception $e) {
+            // dd($e);
+            DB::rollBack();
+        }
+        return redirect()->route('ventas.index')->with('success','Venta exitosa');
+
     }
 
     /**

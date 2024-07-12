@@ -201,6 +201,8 @@
                             <input type="hidden" name="fecha_hora" value="{{$fecha_hora}}">
                         </div>
 
+                        <input type="hidden" name="user_id" value="1">
+
                         <!--Botones-->
                         <div class="col-md-12 mt-4 text-center">
                             <button class="btn btn-success" type="submit" id="guardar">Guardar Compra</button>
@@ -310,7 +312,7 @@
         let dataProducto = document.getElementById('producto_id').value.split('-');
 
         let idProducto = dataProducto[0];
-        let nameProducto = $('producto_id option:selected').text();
+        let nameProducto = $('#producto_id option:selected').text();
         let cantidad = $('#cantidad').val();
         let descuento = $('#descuento').val();
         let precioVenta = $('#precio_venta').val();
