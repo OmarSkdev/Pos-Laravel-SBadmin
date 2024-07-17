@@ -12,6 +12,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
         @stack('css')
     </head>
+    @auth()
     <body class="sb-nav-fixed">
         <x-navigation-header />
         <div id="layoutSidenav">
@@ -32,4 +33,10 @@
         <script src="{{ asset('js/datatables-simple-demo.js') }}"></script> --}}
         @stack('js')
     </body>
+    @endauth
+
+    @guest()
+     @include('pages.401')
+    @endguest
+    
 </html>

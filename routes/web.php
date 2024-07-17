@@ -3,6 +3,9 @@
 use App\Http\Controllers\categoriaController;
 use App\Http\Controllers\clienteController;
 use App\Http\Controllers\compraController;
+use App\Http\Controllers\homeController;
+use App\Http\Controllers\loginController;
+use App\Http\Controllers\logoutController;
 use App\Http\Controllers\marcaController;
 use App\Http\Controllers\presentacioneController;
 use App\Http\Controllers\ProductoController;
@@ -21,13 +24,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [homeController::class, 'index'])->name('panel');
 
-Route::get('/index', function () {
+/* Route::get('/index', function () {
     return view('template');
-});
+}); */
 
 Route::view('/panel', 'panel.index')->name('panel');
 
@@ -56,6 +57,8 @@ Route::get('/500', function () {
     return view('pages.500');
 });
 
-Route::get('/login', function () {
-    return view('auth.login');
-});
+Route::get('/login', [loginController::class,'index'])->name('login');
+Route::post('/login', [loginController::class,'login']);
+Route::get('/logout', [logoutController::class,'logout'])->name('logout');
+
+
